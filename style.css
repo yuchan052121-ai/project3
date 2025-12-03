@@ -1,0 +1,12 @@
+body { font-family: "Hiragino Kaku Gothic ProN", "Meiryo", sans-serif; margin: 24px; line-height: 1.6; }
+header h1 a { text-decoration: none; color: #222; }
+.courses { width: 100%; border-collapse: collapse; margin-bottom: 12px; }
+.courses th, .courses td { border: 1px solid #ddd; padding: 8px; text-align: left; }
+.reviews { list-style: none; padding: 0; }
+.reviews li { padding: 10px; border: 1px solid #eee; margin-bottom: 8px; border-radius: 6px; background: #fafafa; }
+.reviews .meta { color: #666; font-size: 0.9em; margin-left: 8px; }
+.comment { margin-top: 6px; white-space: pre-line; }
+.flashes { list-style: none; padding: 6px; background: #fffbeb; border: 1px solid #ffe5a1; }
+.pager { margin-top: 12px; }
+.pager a { text-decoration: none; margin: 0 8px; }
+form label { display: block; margin: 6px 0; }

@@ -1,0 +1,51 @@
+{% extends "layout.html" %}
+{% block content %}
+<h2>{{ course['code'] }} — {{ course['title'] }}</h2>
+<p>専攻: {{ course['area'] or '-' }} / 年次: {{ course['year'] or '-' }} / 学期: {{ course['semester'] or '-' }} / 曜時限: {{ course['schedule'] or '-' }}</p>
+
+<form method="get" action="{{ url_for('course_view', course_id=course['id']) }}">
+  <label>おすすめフィルタ（最小）:
+    <select name="min_recommend" onchange="this.form.submit()">
+      <option value="">すべて</option>
+      {% for r in [5,4,3,2,1] %}
+        <option value="{{ r }}" {% if min_recommend==r %}selected{% endif %}>{{ r }}以上</option>
+      {% endfor %}
+    </select>
+  </label>
+</form>
+
+<p>合計レビュー: {{ total }}</p>
+
+{% if reviews %}
+  <ul class="reviews">
+  {% for r in reviews %}
+    <li>
+      <div><strong>おすすめ度: {{ r['recommend'] }} / 単位難易度: {{ r['difficulty'] }}</strong>
+      <span class="meta">（投稿: {{ r['created_at'] }}）</span></div>
+      <div>出席: {{ "あり" if r['attendance_required'] else "なし" }} ｜ 試験: {{ r['assessment'] }}</div>
+      <div class="comment">{{ r['comment'] }}</div>
+    </li>
+  {% endfor %}
+  </ul>
+
+  <div class="pager">
+    {% if has_prev %}
+      <a href="{{ url_for('course_view', course_id=course['id'], page=page-1, min_recommend=min_recommend) }}">&laquo; 前へ</a>
+    {% endif %}
+    <span>ページ {{ page }} / {{ pages }}</span>
+    {% if has_next %}
+      <a href="{{ url_for('course_view', course_id=course['id'], page=page+1, min_recommend=min_recommend) }}">次へ &raquo;</a>
+    {% endif %}
+  </div>
+{% else %}
+  <p>レビューはまだありません。</p>
+{% endif %}
+
+<hr>
+<p><a href="{{ url_for('add_review', course_id=course['id']) }}">レビューを書く</a></p>
+
+<form method="post" action="{{ url_for('cancel_review', course_id=course['id']) }}">
+  <label>取消するレビューの名前（投稿時と同じ）: <input name="name" required></label>
+  <button type="submit">取消する</button>
+</form>
+{% endblock %}

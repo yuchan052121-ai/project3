@@ -1,0 +1,40 @@
+{% extends "layout.html" %}
+{% block content %}
+<h2>授業検索</h2>
+<form method="get" action="{{ url_for('search') }}">
+  <label>科目番号: <input name="code" value="{{ code }}"></label>
+  <label>科目名: <input name="title" value="{{ title }}"></label>
+  <label>専攻: 
+    <select name="area">
+      <option value="">すべて</option>
+      <option value="基礎" {% if area=='基礎' %}selected{% endif %}>基礎</option>
+      <option value="社会経済システム" {% if area=='社会経済システム' %}selected{% endif %}>社会経済システム</option>
+      <option value="経営工学" {% if area=='経営工学' %}selected{% endif %}>経営工学</option>
+      <option value="都市計画" {% if area=='都市計画' %}selected{% endif %}>都市計画</option>
+      <option value="その他" {% if area=='その他' %}selected{% endif %}>その他</option>
+    </select>
+  </label>
+  <label>年次: <input name="year" value="{{ year }}"></label>
+  <label>学期: <input name="semester" value="{{ semester }}"></label>
+  <label>曜時限: <input name="schedule" value="{{ schedule }}"></label>
+  <button type="submit">検索</button>
+</form>
+
+<hr>
+<h3>検索結果</h3>
+<table class="courses">
+  <thead><tr><th>コード</th><th>科目名</th><th>専攻区分</th><th>操作</th></tr></thead>
+  <tbody>
+  {% for c in courses %}
+    <tr>
+      <td>{{ c['code'] }}</td>
+      <td>{{ c['title'] }}</td>
+      <td>{{ c['area'] or '-' }}</td>
+      <td>
+        <a href="{{ url_for('course_view', course_id=c['id']) }}">表示</a>
+      </td>
+    </tr>
+  {% endfor %}
+  </tbody>
+</table>
+{% endblock %}

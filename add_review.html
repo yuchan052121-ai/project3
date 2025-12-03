@@ -1,0 +1,45 @@
+{% extends "layout.html" %}
+{% block content %}
+<h2>レビューを書く — {{ course['code'] }} {{ course['title'] }}</h2>
+
+<form method="post" action="{{ url_for('add_review', course_id=course['id']) }}">
+  <label>名前（任意）: <input name="name" required></label><br>
+
+  <label>単位取得難易度:
+    <select name="difficulty" required>
+      <option value="">選択</option>
+      {% for i in [5,4,3,2,1] %}
+        <option value="{{ i }}">{{ i }}</option>
+      {% endfor %}
+    </select>
+  </label><br>
+
+  <label>おすすめ度:
+    <select name="recommend" required>
+      <option value="">選択</option>
+      {% for i in [5,4,3,2,1] %}
+        <option value="{{ i }}">{{ i }}</option>
+      {% endfor %}
+    </select>
+  </label><br>
+
+  <label>出席必須: <input type="checkbox" name="attendance"></label><br>
+
+  <label>試験形式:
+    <select name="assessment">
+      <option value="テスト">テスト</option>
+      <option value="レポート">レポート</option>
+      <option value="両方">両方</option>
+      <option value="なし">なし</option>
+    </select>
+  </label><br>
+
+  <label>コメント:<br>
+    <textarea name="comment" rows="6" cols="60" required></textarea>
+  </label><br>
+
+  <button type="submit">投稿する</button>
+</form>
+
+<p><a href="{{ url_for('course_view', course_id=course['id']) }}">戻る</a></p>
+{% endblock %}

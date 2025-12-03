@@ -1,0 +1,21 @@
+{% extends "layout.html" %}
+{% block content %}
+<h2>科目一覧</h2>
+<table class="courses">
+  <thead><tr><th>コード</th><th>科目名</th><th>専攻区分</th><th>年次</th><th>学期</th><th>曜時限</th><th>操作</th></tr></thead>
+  <tbody>
+  {% for c in courses %}
+    <tr>
+      <td>{{ c['code'] }}</td>
+      <td>{{ c['title'] }}</td>
+      <td>{{ c['area'] or '-' }}</td>
+      <td>{{ c['year'] or '-' }}</td>
+      <td>{{ c['semester'] or '-' }}</td>
+      <td>{{ c['schedule'] or '-' }}</td>
+      <td><a href="{{ url_for('course_view', course_id=c['id']) }}">表示</a> |
+          <a href="{{ url_for('add_review', course_id=c['id']) }}">レビュー</a></td>
+    </tr>
+  {% endfor %}
+  </tbody>
+</table>
+{% endblock %}
