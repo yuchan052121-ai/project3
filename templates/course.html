@@ -20,7 +20,7 @@
   <ul class="reviews">
   {% for r in reviews %}
     <li>
-      <div><strong>おすすめ度: {{ r['recommend'] }} / 単位難易度: {{ r['difficulty'] }}</strong>
+      <div><strong>おすすめ度: {{ r['recommend'] }} / 単位難易度: {{ r['difficulty'] }}/ 楽しさ: {{ r['fun'] }}/ 学び: {{ r['learning'] }}</strong>
       <span class="meta">（投稿: {{ r['created_at'] }}）</span></div>
       <div>出席: {{ "あり" if r['attendance_required'] else "なし" }} ｜ 試験: {{ r['assessment'] }}</div>
       <div class="comment">{{ r['comment'] }}</div>
@@ -49,4 +49,5 @@
   <button type="submit">取消する</button>
 </form>
 {% endblock %}
+
 
