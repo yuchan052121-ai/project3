@@ -118,14 +118,16 @@ def add_review(course_id):
 
     if request.method == "POST":
         name = request.form.get("name", "").strip()
-        difficulty = request.form.get("difficulty", type=int)
         recommend = request.form.get("recommend", type=int)
+        difficulty = request.form.get("difficulty", type=int)
+        fun = request.form.get("fun", type=int)
+        learning = request.form.get("learning", type=int)
         attendance = 1 if request.form.get("attendance") == "on" else 0
         assessment = request.form.get("assessment", "なし")
         comment = request.form.get("comment", "").strip()
 
         if not name or not difficulty or not recommend:
-            flash("名前・難易度・おすすめの評価を正しく入力してください。")
+            flash("名前・おすすめ・難易度・楽しさ・学びの評価を正しく入力してください。")
             return redirect(url_for("add_review", course_id=course_id))
 
         user_id = make_user_id(name)
@@ -133,7 +135,7 @@ def add_review(course_id):
         db = get_db()
         try:
             db.execute("""
-                INSERT INTO reviews (course_id, user_id, difficulty, recommend, attendance_required, assessment, comment, created_at, active)
+                INSERT INTO reviews (course_id, user_id, recommend, difficulty, fun, learning, attendance_required, assessment, comment, created_at, active)
                 VALUES (?, ?, ?, ?, ?, ?, ?, ?, 1)
             """, (course_id, user_id, difficulty, recommend, attendance, assessment, comment, now))
             db.commit()
