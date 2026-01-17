@@ -136,7 +136,7 @@ def add_review(course_id):
         try:
             db.execute("""
                 INSERT INTO reviews (course_id, user_id, recommend, difficulty, fun, learning, attendance_required, assessment, comment, created_at, active)
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?, 1)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ? 1)
             """, (course_id, user_id, difficulty, recommend, attendance, assessment, comment, now))
             db.commit()
             flash("レビューを追加しました。")
