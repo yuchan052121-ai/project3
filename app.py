@@ -126,7 +126,7 @@ def add_review(course_id):
         assessment = request.form.get("assessment", "なし")
         comment = request.form.get("comment", "").strip()
 
-        if not name or not difficulty or not recommend:
+        if not name or not recommend or not difficulty or not fun or not learning:
             flash("名前・おすすめ・難易度・楽しさ・学びの評価を正しく入力してください。")
             return redirect(url_for("add_review", course_id=course_id))
 
@@ -136,8 +136,8 @@ def add_review(course_id):
         try:
             db.execute("""
                 INSERT INTO reviews (course_id, user_id, recommend, difficulty, fun, learning, attendance_required, assessment, comment, created_at, active)
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?,1)
-            """, (course_id, user_id, difficulty, recommend, attendance, assessment, comment, now))
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 1)
+            """, (course_id, user_id, recommend, difficulty, attendance, assessment, comment, now))
             db.commit()
             flash("レビューを追加しました。")
         except sqlite3.IntegrityError:
