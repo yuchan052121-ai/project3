@@ -1,121 +1,40 @@
-<!DOCTYPE html>
-<html lang="ja">
-<head>
-    <meta charset="UTF-8">
-    <title>授業検索結果</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
-</head>
-<body>
-
-<h1>授業検索</h1>
-
-<!-- 🔍 検索フォーム -->
+{% extends "layout.html" %}
+{% block content %}
+<h2>授業検索</h2>
 <form method="get" action="{{ url_for('search') }}">
-
-    <!-- 科目番号 -->
-    <label>
-        科目番号：
-        <input type="text" name="code" value="{{ request.args.get('code', '') }}">
-    </label>
-
-    <!-- 授業科目名 -->
-    <label>
-        授業科目名：
-        <input type="text" name="title" value="{{ request.args.get('title', '') }}">
-    </label>
-
-    <br><br>
-
-    <!-- 標準履修年次 -->
-    <label>
-        標準履修年次：
-        <select name="year">
-            <option value="">すべて</option>
-            {% for y in [
-                "1 年次", "2 年次", "3 年次", "4 年次",
-                "1 - 3 年次", "1 - 4 年次",
-                "2 - 4 年次", "3・4 年次"
-            ] %}
-                <option value="{{ y }}"
-                    {% if request.args.get('year') == y %}selected{% endif %}>
-                    {{ y }}
-                </option>
-            {% endfor %}
-        </select>
-    </label>
-
-    <!-- 時間割（学期＋曜時限） -->
-    <label>
-        時間割：
-        <input type="text" name="schedule"
-               placeholder="例：春A 月3"
-               value="{{ request.args.get('schedule', '') }}">
-    </label>
-
-    <br><br>
-
-    <!-- 専攻区分 -->
-    <label>
-        専攻区分：
-        <select name="area">
-            <option value="">すべて</option>
-            {% for a in [
-                "基礎・専門基礎",
-                "社会経済システム",
-                "経営工学",
-                "都市計画",
-                "その他"
-            ] %}
-                <option value="{{ a }}"
-                    {% if request.args.get('area') == a %}selected{% endif %}>
-                    {{ a }}
-                </option>
-            {% endfor %}
-        </select>
-    </label>
-
-    <br><br>
-
-    <button type="submit">検索</button>
-    <a href="{{ url_for('index') }}">一覧に戻る</a>
+  <label>科目番号: <input name="code" value="{{ code }}"></label>
+  <label>科目名: <input name="title" value="{{ title }}"></label>
+  <label>専攻: 
+    <select name="area">
+      <option value="">すべて</option>
+      <option value="基礎" {% if area=='基礎' %}selected{% endif %}>基礎</option>
+      <option value="社会経済システム" {% if area=='社会経済システム' %}selected{% endif %}>社会経済システム</option>
+      <option value="経営工学" {% if area=='経営工学' %}selected{% endif %}>経営工学</option>
+      <option value="都市計画" {% if area=='都市計画' %}selected{% endif %}>都市計画</option>
+      <option value="その他" {% if area=='その他' %}selected{% endif %}>その他</option>
+    </select>
+  </label>
+  <label>年次: <input name="year" value="{{ year }}"></label>
+  <label>学期: <input name="semester" value="{{ semester }}"></label>
+  <label>曜時限: <input name="schedule" value="{{ schedule }}"></label>
+  <button type="submit">検索</button>
 </form>
 
 <hr>
-
-<!-- 📄 検索結果 -->
-<h2>検索結果（{{ courses|length }} 件）</h2>
-
-{% if courses %}
-<table border="1" cellpadding="6">
-    <thead>
-        <tr>
-            <th>科目番号</th>
-            <th>授業科目名</th>
-            <th>標準履修年次</th>
-            <th>時間割</th>
-            <th>専攻区分</th>
-        </tr>
-    </thead>
-    <tbody>
-        {% for c in courses %}
-        <tr>
-            <td>{{ c['code'] }}</td>
-            <td>
-                <a href="{{ url_for('course_view', course_id=c['id']) }}">
-                    {{ c['title'] }}
-                </a>
-            </td>
-            <td>{{ c['year'] }}</td>
-            <td>{{ c['schedule'] }}</td>
-            <td>{{ c['area'] }}</td>
-        </tr>
-        {% endfor %}
-    </tbody>
+<h3>検索結果</h3>
+<table class="courses">
+  <thead><tr><th>コード</th><th>科目名</th><th>専攻区分</th><th>操作</th></tr></thead>
+  <tbody>
+  {% for c in courses %}
+    <tr>
+      <td>{{ c['code'] }}</td>
+      <td>{{ c['title'] }}</td>
+      <td>{{ c['area'] or '-' }}</td>
+      <td>
+        <a href="{{ url_for('course_view', course_id=c['id']) }}">表示</a>
+      </td>
+    </tr>
+  {% endfor %}
+  </tbody>
 </table>
-{% else %}
-<p>条件に一致する授業は見つかりませんでした。</p>
-{% endif %}
-
-</body>
-</html>
-
+{% endblock %}
