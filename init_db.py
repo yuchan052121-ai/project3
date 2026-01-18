@@ -1,40 +1,46 @@
 import sqlite3
 
-conn = sqlite3.connect("reviews.db")
-c = conn.cursor()
+DB = "reviews.db"
 
-c.execute("""
-CREATE TABLE IF NOT EXISTS courses (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    code TEXT UNIQUE,
-    title TEXT,
-    area TEXT,
-    year TEXT,
-    schedule TEXT
-);
-""")
+def init_db():
+    conn = sqlite3.connect(DB)
+    c = conn.cursor()
 
-c.execute("""
-CREATE TABLE IF NOT EXISTS reviews (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    course_id INTEGER,
-    user_id TEXT,
+    # courses（Excel連携）
+    c.execute("""
+    CREATE TABLE IF NOT EXISTS courses (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        code TEXT UNIQUE,
+        title TEXT,
+        year TEXT,        -- 標準履修年次（文字列のまま）
+        schedule TEXT,    -- 時間割
+        area TEXT         -- 専攻区分
+    )
+    """)
 
-    recommend INTEGER CHECK(recommend BETWEEN 1 AND 5),
-    difficulty INTEGER CHECK(difficulty BETWEEN 1 AND 5),
-    fun INTEGER CHECK(fun BETWEEN 1 AND 5),
-    learning INTEGER CHECK(learning BETWEEN 1 AND 5),
+    # reviews（4項目星評価）
+    c.execute("""
+    CREATE TABLE IF NOT EXISTS reviews (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        course_id INTEGER,
+        user_id TEXT,
 
-    attendance_required INTEGER,
-    assessment TEXT,
-    comment TEXT,
-    created_at TEXT,
-    active INTEGER DEFAULT 1,
+        recommend INTEGER CHECK(recommend BETWEEN 1 AND 5),
+        difficulty INTEGER CHECK(difficulty BETWEEN 1 AND 5),
+        fun INTEGER CHECK(fun BETWEEN 1 AND 5),
+        learning INTEGER CHECK(learning BETWEEN 1 AND 5),
 
-    UNIQUE(course_id, user_id, active)
-);
-""")
+        comment TEXT,
+        created_at TEXT,
+        active INTEGER DEFAULT 1,
 
-conn.commit()
-conn.close()
-print("DB initialized")
+        UNIQUE(course_id, user_id, active)
+    )
+    """)
+
+    conn.commit()
+    conn.close()
+
+if __name__ == "__main__":
+    init_db()
+    print("DB initialized")
