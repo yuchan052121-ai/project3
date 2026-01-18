@@ -101,7 +101,7 @@
         <tr>
             <td>{{ c['code'] }}</td>
             <td>
-                <a href="{{ url_for('course_detail', course_id=c['id']) }}">
+                <a href="{{ url_for('course_view', course_id=c['id']) }}">
                     {{ c['title'] }}
                 </a>
             </td>
@@ -118,3 +118,4 @@
 
 </body>
 </html>
+
