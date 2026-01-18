@@ -1,77 +1,40 @@
-#!/usr/bin/env python
-# coding: utf-8
-
-# In[1]:
-
-
-# init_db.py
 import sqlite3
-import datetime
 
-DB = "reviews.db"
+conn = sqlite3.connect("reviews.db")
+c = conn.cursor()
 
-def init_db(path=DB):
-    conn = sqlite3.connect(path)
-    c = conn.cursor()
+c.execute("""
+CREATE TABLE IF NOT EXISTS courses (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    code TEXT UNIQUE,
+    title TEXT,
+    area TEXT,
+    year TEXT,
+    schedule TEXT
+);
+""")
 
-    # courses テーブル（シラバス情報に合わせてフィールドを拡張）
-    c.execute("""
-    CREATE TABLE IF NOT EXISTS courses (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        code TEXT UNIQUE,
-        title TEXT,
-        area TEXT,            -- 専攻区分（例: 基礎, 社会経済システム, 経営工学, 都市計画, その他）
-        year TEXT,            -- 標準履修年次（文字列で保存）
-        schedule TEXT,        -- 曜時限（例: 月1, 火3-4）
-        credits REAL,
-        syllabus_url TEXT
-    )
-    """)
+c.execute("""
+CREATE TABLE IF NOT EXISTS reviews (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    course_id INTEGER,
+    user_id TEXT,
 
-    # reviews テーブル
-        c.execute("""
-    CREATE TABLE IF NOT EXISTS reviews (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        course_id INTEGER,
-        user_id TEXT,
-        recommend INTEGER CHECK(recommend BETWEEN 1 AND 5),
-        difficulty INTEGER CHECK(difficulty BETWEEN 1 AND 5),
-        fun INTEGER CHECK(fun BETWEEN 1 AND 5),
-        learning INTEGER CHECK(learning BETWEEN 1 AND 5),
-        attendance_required INTEGER DEFAULT 0,
-        assessment TEXT,
-        comment TEXT,
-        created_at TIMESTAMP,
-        active INTEGER DEFAULT 1,
-        UNIQUE(course_id, user_id, active)
-    )
-    """)
+    recommend INTEGER,
+    difficulty INTEGER,
+    fun INTEGER,
+    learning INTEGER,
 
+    attendance_required INTEGER,
+    assessment TEXT,
+    comment TEXT,
+    created_at TEXT,
+    active INTEGER DEFAULT 1,
 
-    conn.commit()
-    return conn
+    UNIQUE(course_id, user_id, active)
+);
+""")
 
-def seed_sample_courses(conn):
-    c = conn.cursor()
-    sample = [
-        ("SES101", "社会経済入門", "基礎", 1, "前期", "月1", 2, None),
-        ("ENG201", "経営工学基礎", "経営工学", 2, "前期", "火2-3", 2, None),
-        ("URP301", "都市計画論", "都市計画", 3, "後期", "水4", 2, None),
-        ("STAT220", "統計学入門", "基礎", 2, "前期", "木3", 2, None),
-    ]
-    for code, title, area, year, sem, sched, credits, url in sample:
-        try:
-            c.execute("""
-                INSERT INTO courses (code, title, area, year, semester, schedule, credits, syllabus_url)
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?)
-            """, (code, title, area, year, sem, sched, credits, url))
-        except sqlite3.IntegrityError:
-            pass
-    conn.commit()
-
-if __name__ == "__main__":
-    conn = init_db()
-    seed_sample_courses(conn)
-    print("Initialized DB as reviews.db with sample courses.")
-    conn.close()
-
+conn.commit()
+conn.close()
+print("DB initialized")
