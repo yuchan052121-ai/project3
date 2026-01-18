@@ -21,8 +21,7 @@ def init_db(path=DB):
         code TEXT UNIQUE,
         title TEXT,
         area TEXT,            -- 専攻区分（例: 基礎, 社会経済システム, 経営工学, 都市計画, その他）
-        year INTEGER,         -- 標準履修年次（例: 1,2,3,4）
-        semester TEXT,        -- 実施学期（例: 前期, 後期, 通年）
+        year TEXT,            -- 標準履修年次（文字列で保存）
         schedule TEXT,        -- 曜時限（例: 月1, 火3-4）
         credits REAL,
         syllabus_url TEXT
