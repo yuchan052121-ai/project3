@@ -10,7 +10,6 @@
       <td>{{ c['title'] }}</td>
       <td>{{ c['area'] or '-' }}</td>
       <td>{{ c['year'] or '-' }}</td>
-      <td>{{ c['semester'] or '-' }}</td>
       <td>{{ c['schedule'] or '-' }}</td>
       <td><a href="{{ url_for('course_view', course_id=c['id']) }}">表示</a> |
           <a href="{{ url_for('add_review', course_id=c['id']) }}">レビュー</a></td>
@@ -19,3 +18,4 @@
   </tbody>
 </table>
 {% endblock %}
+
