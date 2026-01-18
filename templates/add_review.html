@@ -6,37 +6,37 @@
   <label>名前（任意）: <input name="name" required></label><br>
 
   <label>おすすめ度:
-  <select name="recommend" required>
+    <select name="recommend" required>
     <option value="">選択</option>
-    {% for i in range(1,6) %}
-      <option value="{{ i }}">{{ i }}</option>
-    {% endfor %}
-  </select>
-</label>
+      {% for i in range(1,6) %}
+    <option value="{{ i }}">{{ i }}</option>
+      {% endfor %}
+    </select>
+  </label>
 
-<label>単位取得難易度:
-  <select name="difficulty" required>
-    {% for i in range(1,6) %}
-      <option value="{{ i }}">{{ i }}</option>
-    {% endfor %}
-  </select>
-</label>
+  <label>単位取得難易度:
+    <select name="difficulty" required>
+      {% for i in range(1,6) %}
+        <option value="{{ i }}">{{ i }}</option>
+      {% endfor %}
+    </select>
+  </label>
 
-<label>楽しさ:
-  <select name="fun" required>
-    {% for i in range(1,6) %}
-      <option value="{{ i }}">{{ i }}</option>
-    {% endfor %}
-  </select>
-</label>
+  <label>楽しさ:
+    <select name="fun" required>
+      {% for i in range(1,6) %}
+        <option value="{{ i }}">{{ i }}</option>
+      {% endfor %}
+    </select>
+  </label>
 
-<label>学び:
-  <select name="learning" required>
-    {% for i in range(1,6) %}
-      <option value="{{ i }}">{{ i }}</option>
-    {% endfor %}
-  </select>
-</label>
+  <label>学び:
+    <select name="learning" required>
+      {% for i in range(1,6) %}
+        <option value="{{ i }}">{{ i }}</option>
+      {% endfor %}
+    </select>
+  </label>
 
   <label>出席必須: <input type="checkbox" name="attendance"></label><br>
 
@@ -58,5 +58,6 @@
 
 <p><a href="{{ url_for('course_view', course_id=course['id']) }}">戻る</a></p>
 {% endblock %}
+
 
 
