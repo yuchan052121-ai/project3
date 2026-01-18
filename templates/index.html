@@ -1,7 +1,7 @@
 {% extends "layout.html" %}
 {% block content %}
 <table>
-<tr><th>科目番号</th><th>授業名</th><th>専攻</th><th></th></tr>
+<tr><th>科目番号</th><th>授業科目名</th><th>専攻区分</th><th></th></tr>
 {% for c in courses %}
 <tr>
 <td>{{ c.code }}</td>
@@ -12,3 +12,4 @@
 {% endfor %}
 </table>
 {% endblock %}
+
