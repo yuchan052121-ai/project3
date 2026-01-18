@@ -1,7 +1,7 @@
 {% extends "layout.html" %}
 {% block content %}
 <h2>{{ course['code'] }} — {{ course['title'] }}</h2>
-<p>専攻: {{ course['area'] or '-' }} / 年次: {{ course['year'] or '-' }} / 学期: {{ course['semester'] or '-' }} / 曜時限: {{ course['schedule'] or '-' }}</p>
+<p>専攻: {{ course['area'] or '-' }} / 標準履修年次: {{ course['year'] or '-' }} / 時間割: {{ course['schedule'] or '-' }}</p>
 
 <form method="get" action="{{ url_for('course_view', course_id=course['id']) }}">
   <label>おすすめフィルタ（最小）:
@@ -20,7 +20,7 @@
   <ul class="reviews">
   {% for r in reviews %}
     <li>
-      <div><strong>おすすめ度: {{ r['recommend'] }} / 単位難易度: {{ r['difficulty'] }}/ 楽しさ: {{ r['fun'] }}/ 学び: {{ r['learning'] }}</strong>
+      <div><strong>おすすめ度: {{ r['recommend'] }} / 単位取得難易度: {{ r['difficulty'] }}/ 楽しさ: {{ r['fun'] }}/ 学び: {{ r['learning'] }}</strong>
       <span class="meta">（投稿: {{ r['created_at'] }}）</span></div>
       <div>出席: {{ "あり" if r['attendance_required'] else "なし" }} ｜ 試験: {{ r['assessment'] }}</div>
       <div class="comment">{{ r['comment'] }}</div>
@@ -49,5 +49,6 @@
   <button type="submit">取消する</button>
 </form>
 {% endblock %}
+
 
 
