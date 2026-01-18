@@ -20,10 +20,10 @@ CREATE TABLE IF NOT EXISTS reviews (
     course_id INTEGER,
     user_id TEXT,
 
-    recommend INTEGER,
-    difficulty INTEGER,
-    fun INTEGER,
-    learning INTEGER,
+    recommend INTEGER CHECK(recommend BETWEEN 1 AND 5),
+    difficulty INTEGER CHECK(difficulty BETWEEN 1 AND 5),
+    fun INTEGER CHECK(fun BETWEEN 1 AND 5),
+    learning INTEGER CHECK(learning BETWEEN 1 AND 5),
 
     attendance_required INTEGER,
     assessment TEXT,
