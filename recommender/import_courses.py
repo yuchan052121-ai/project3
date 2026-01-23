@@ -1,0 +1,210 @@
+{
+ "cells": [
+  {
+   "cell_type": "raw",
+   "id": "96cd3c52-a95a-4d2d-a526-02c74e8a8617",
+   "metadata": {},
+   "source": []
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "d88e6823-60fb-43e6-92de-daaa21a46642",
+   "metadata": {},
+   "outputs": [],
+   "source": []
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 1,
+   "id": "831fc4ae-646d-4849-a8c1-7e883e5804a6",
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "Requirement already satisfied: pandas in c:\\users\\fmiha\\anaconda3\\lib\\site-packages (2.2.3)\n",
+      "Requirement already satisfied: openpyxl in c:\\users\\fmiha\\anaconda3\\lib\\site-packages (3.1.5)\n",
+      "Requirement already satisfied: numpy>=1.26.0 in c:\\users\\fmiha\\anaconda3\\lib\\site-packages (from pandas) (2.1.3)\n",
+      "Requirement already satisfied: python-dateutil>=2.8.2 in c:\\users\\fmiha\\anaconda3\\lib\\site-packages (from pandas) (2.9.0.post0)\n",
+      "Requirement already satisfied: pytz>=2020.1 in c:\\users\\fmiha\\anaconda3\\lib\\site-packages (from pandas) (2024.1)\n",
+      "Requirement already satisfied: tzdata>=2022.7 in c:\\users\\fmiha\\anaconda3\\lib\\site-packages (from pandas) (2025.2)\n",
+      "Requirement already satisfied: et-xmlfile in c:\\users\\fmiha\\anaconda3\\lib\\site-packages (from openpyxl) (1.1.0)\n",
+      "Requirement already satisfied: six>=1.5 in c:\\users\\fmiha\\anaconda3\\lib\\site-packages (from python-dateutil>=2.8.2->pandas) (1.17.0)\n"
+     ]
+    }
+   ],
+   "source": [
+    "!pip install pandas openpyxl"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "8275cf23-0830-4b59-9a16-9341b8de6c2c",
+   "metadata": {},
+   "outputs": [],
+   "source": []
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 7,
+   "id": "991fb0cd-565c-45c1-81aa-4c6c78c0c70c",
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "既存の reviews.db を削除しました。\n",
+      "テーブルの作成が完了しました。\n",
+      "インポート成功: 100件の授業を処理しました。\n"
+     ]
+    }
+   ],
+   "source": [
+    "import pandas as pd\n",
+    "import sqlite3\n",
+    "import os\n",
+    "import re\n",
+    "\n",
+    "# 設定\n",
+    "DB_FILE = \"reviews.db\"\n",
+    "# ファイル名を変更\n",
+    "KEYWORD_FILE = \"キーワード_拡大版_社会工学類.csv\" \n",
+    "SYLLABUS_FILE = \"kdb_20251220100333_社会工学類.csv\"\n",
+    "\n",
+    "def rebuild_and_import():\n",
+    "    if os.path.exists(DB_FILE):\n",
+    "        try:\n",
+    "            os.remove(DB_FILE)\n",
+    "            print(f\"既存の {DB_FILE} を削除しました。\")\n",
+    "        except PermissionError:\n",
+    "            print(\"エラー: reviews.db が使用中です。Flaskを止めてください。\")\n",
+    "            return\n",
+    "\n",
+    "    conn = sqlite3.connect(DB_FILE)\n",
+    "    cur = conn.cursor()\n",
+    "\n",
+    "    # テーブル作成\n",
+    "    cur.execute(\"\"\"\n",
+    "        CREATE TABLE courses (\n",
+    "            id INTEGER PRIMARY KEY AUTOINCREMENT,\n",
+    "            code TEXT UNIQUE,\n",
+    "            title TEXT,\n",
+    "            area TEXT,\n",
+    "            year INTEGER,\n",
+    "            semester TEXT,\n",
+    "            schedule TEXT,\n",
+    "            credits REAL\n",
+    "        )\n",
+    "    \"\"\")\n",
+    "    cur.execute(\"\"\"\n",
+    "        CREATE TABLE reviews (\n",
+    "            id INTEGER PRIMARY KEY AUTOINCREMENT,\n",
+    "            course_id INTEGER,\n",
+    "            user_id TEXT,\n",
+    "            difficulty INTEGER,\n",
+    "            recommend INTEGER,\n",
+    "            attendance_required INTEGER,\n",
+    "            assessment TEXT,\n",
+    "            comment TEXT,\n",
+    "            created_at TIMESTAMP,\n",
+    "            active INTEGER DEFAULT 1\n",
+    "        )\n",
+    "    \"\"\")\n",
+    "    print(\"テーブルの作成が完了しました。\")\n",
+    "\n",
+    "    try:\n",
+    "        # キーワードファイルの読み込み（CSVに変更されたため pd.read_csv を使用）\n",
+    "        # encodingは 'utf-8' を指定。エラーが出る場合は 'cp932' を試してください。\n",
+    "        df_kw = pd.read_csv(KEYWORD_FILE, encoding='utf-8')\n",
+    "        df_kw.columns = [c.strip() for c in df_kw.columns]\n",
+    "        \n",
+    "        if '科目名' in df_kw.columns:\n",
+    "            df_kw = df_kw.rename(columns={'科目名': '授業科目名'})\n",
+    "        \n",
+    "        # シラバス読み込み\n",
+    "        df_syllabus = pd.read_csv(SYLLABUS_FILE, encoding='utf-8', skiprows=4)\n",
+    "        df_syllabus.columns = [c.strip() for c in df_syllabus.columns]\n",
+    "        if '科目名' in df_syllabus.columns:\n",
+    "            df_syllabus = df_syllabus.rename(columns={'科目名': '授業科目名'})\n",
+    "\n",
+    "        # 統合\n",
+    "        df_integrated = pd.merge(\n",
+    "            df_kw[['授業科目名']], \n",
+    "            df_syllabus,\n",
+    "            on='授業科目名', \n",
+    "            how='left'\n",
+    "        ).drop_duplicates(subset=['授業科目名'])\n",
+    "\n",
+    "\n",
+    "\n",
+    "\n",
+    "        for _, row in df_integrated.iterrows():\n",
+    "            # --- 年次の抽出 (数字だけを取り出す) ---\n",
+    "            year_raw = str(row.get('標準履修年次', ''))\n",
+    "            year_match = re.search(r'\\d', year_raw)\n",
+    "            year_val = int(year_match.group()) if year_match else None\n",
+    "            \n",
+    "            # --- NaN対策 (nanという文字列を表示させない) ---\n",
+    "            def clean_nan(val):\n",
+    "                s = str(val)\n",
+    "                return \"\" if s.lower() == 'nan' or s == 'None' else s\n",
+    "            \n",
+    "            cur.execute(\"\"\"\n",
+    "                INSERT OR IGNORE INTO courses (code, title, area, year, semester, schedule, credits)\n",
+    "                VALUES (?, ?, ?, ?, ?, ?, ?)\n",
+    "            \"\"\", (\n",
+    "                clean_nan(row.get('科目番号')), \n",
+    "                row['授業科目名'], \n",
+    "                \"社会工学類\",\n",
+    "                year_val,\n",
+    "                clean_nan(row.get('実施学期')), \n",
+    "                clean_nan(row.get('曜時限')), \n",
+    "                row.get('単位数', 0)\n",
+    "            ))\n",
+    "            \n",
+    "        conn.commit()\n",
+    "        print(f\"インポート成功: {len(df_integrated)}件の授業を処理しました。\")\n",
+    "        \n",
+    "    except Exception as e:\n",
+    "        print(f\"実行中にエラーが発生しました: {e}\")\n",
+    "    finally:\n",
+    "        conn.close()\n",
+    "\n",
+    "rebuild_and_import()"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "98650316-dd8f-4a9b-901f-32d6d21ae847",
+   "metadata": {},
+   "outputs": [],
+   "source": []
+  }
+ ],
+ "metadata": {
+  "kernelspec": {
+   "display_name": "Python (project3_venv)",
+   "language": "python",
+   "name": "venv_project3"
+  },
+  "language_info": {
+   "codemirror_mode": {
+    "name": "ipython",
+    "version": 3
+   },
+   "file_extension": ".py",
+   "mimetype": "text/x-python",
+   "name": "python",
+   "nbconvert_exporter": "python",
+   "pygments_lexer": "ipython3",
+   "version": "3.13.5"
+  }
+ },
+ "nbformat": 4,
+ "nbformat_minor": 5
+}

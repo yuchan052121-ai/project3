@@ -1,46 +1,27 @@
-{% extends "layout.html" %}
-{% block content %}
-<h2>レビューを書く — {{ course['code'] }} {{ course['title'] }}</h2>
-
-<form method="post" action="{{ url_for('add_review', course_id=course['id']) }}">
-  <label>名前（任意）: <input name="name" required></label><br>
-
-  <label>単位取得難易度:
-    <select name="difficulty" required>
-      <option value="">選択</option>
-      {% for i in [5,4,3,2,1] %}
-        <option value="{{ i }}">{{ i }}</option>
-      {% endfor %}
-    </select>
-  </label><br>
-
-  <label>おすすめ度:
-    <select name="recommend" required>
-      <option value="">選択</option>
-      {% for i in [5,4,3,2,1] %}
-        <option value="{{ i }}">{{ i }}</option>
-      {% endfor %}
-    </select>
-  </label><br>
-
-  <label>出席必須: <input type="checkbox" name="attendance"></label><br>
-
-  <label>試験形式:
-    <select name="assessment">
-      <option value="テスト">テスト</option>
-      <option value="レポート">レポート</option>
-      <option value="両方">両方</option>
-      <option value="なし">なし</option>
-    </select>
-  </label><br>
-
-  <label>コメント:<br>
-    <textarea name="comment" rows="6" cols="60" required></textarea>
-  </label><br>
-
-  <button type="submit">投稿する</button>
-</form>
-
-<p><a href="{{ url_for('course_view', course_id=course['id']) }}">戻る</a></p>
-{% endblock %}
-
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <title>レビューの投稿</title>
+</head>
+<body>
+    <h1>「{{ course['title'] }}」のレビューを投稿</h1>
+    <form method="post">
+        <p>学籍番号: 
+            <input type="text" name="name" 
+                   pattern="\d{9}" 
+                   maxlength="9" 
+                   placeholder="例：123456789" 
+                   title="9桁の数字で入力してください" 
+                   required>
+        </p>
+        <p>難易度 (1-5): <input type="number" name="difficulty" min="1" max="5" required></p>
+        <p>おすすめ度 (1-5): <input type="number" name="recommend" min="1" max="5" required></p>
+        <p>出席確認: <input type="checkbox" name="attendance"></p>
+        <p>評価方法: <input type="text" name="assessment" placeholder="例：レポートのみ"></p>
+        <p>コメント:<br><textarea name="comment" rows="4" cols="40"></textarea></p>
+        <button type="submit">投稿する</button>
+    </form>
+    <p><a href="{{ url_for('index') }}">戻る</a></p>
+</body>
+</html>
