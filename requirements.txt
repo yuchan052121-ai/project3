@@ -3,4 +3,5 @@ gunicorn
 numpy
 pandas
 gensin
-
+scikit-learn
+nltk
