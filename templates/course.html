@@ -1,34 +1,42 @@
 {% extends "layout.html" %}
 {% block content %}
 <h2>{{ course['code'] }} — {{ course['title'] }}</h2>
-<p>専攻: {{ course['area'] or '-' }} / 年次: {{ course['year'] or '-' }} / 学期: {{ course['semester'] or '-' }} / 曜時限: {{ course['schedule'] or '-' }}</p>
+<p>
+  専攻: {{ course['area'] or '-' }} / 
+  年次: {{ course['year'] or '-' }} / 
+  学期: {{ course['semester'] or '-' }} / 
+  曜時限: {{ course['schedule'] or '-' }} /
+  単位数: {{ course['credits'] or '-' }}
+</p>
 
 <form method="get" action="{{ url_for('course_view', course_id=course['id']) }}">
   <label>おすすめフィルタ（最小）:
     <select name="min_recommend" onchange="this.form.submit()">
       <option value="">すべて</option>
       {% for r in [5,4,3,2,1] %}
-        <option value="{{ r }}" {% if min_recommend==r %}selected{% endif %}>{{ r }}以上</option>
+        <option value="{{ r }}" {% if min_recommend == r %}selected{% endif %}>{{ r }}以上</option>
       {% endfor %}
     </select>
   </label>
 </form>
 
-<p>合計レビュー: {{ total }}</p>
+<p>合計レビュー: {{ total or 0 }}</p>
 
 {% if reviews %}
   <ul class="reviews">
   {% for r in reviews %}
-    <li>
-      <div><strong>おすすめ度: {{ r['recommend'] }} / 単位難易度: {{ r['difficulty'] }}</strong>
-      <span class="meta">（投稿: {{ r['created_at'] }}）</span></div>
-      <div>出席: {{ "あり" if r['attendance_required'] else "なし" }} ｜ 試験: {{ r['assessment'] }}</div>
-      <div class="comment">{{ r['comment'] }}</div>
+    <li style="border-bottom: 1px solid #ccc; padding: 10px 0;">
+      <div>
+        <strong>おすすめ度: {{ r['recommend'] }} / 単位難易度: {{ r['difficulty'] }}</strong>
+        <span class="meta" style="font-size: 0.8em; color: #666;">（投稿: {{ r['created_at'] }}）</span>
+      </div>
+      <div>出席: {{ "あり" if r['attendance_required'] else "なし" }} ｜ 試験・評価: {{ r['assessment'] }}</div>
+      <div class="comment" style="margin-top: 5px;">{{ r['comment'] }}</div>
     </li>
   {% endfor %}
   </ul>
 
-  <div class="pager">
+  <div class="pager" style="margin: 20px 0;">
     {% if has_prev %}
       <a href="{{ url_for('course_view', course_id=course['id'], page=page-1, min_recommend=min_recommend) }}">&laquo; 前へ</a>
     {% endif %}
@@ -42,10 +50,19 @@
 {% endif %}
 
 <hr>
-<p><a href="{{ url_for('add_review', course_id=course['id']) }}">レビューを書く</a></p>
 
-<form method="post" action="{{ url_for('cancel_review', course_id=course['id']) }}">
-  <label>取消するレビューの名前（投稿時と同じ）: <input name="name" required></label>
-  <button type="submit">取消する</button>
-</form>
+<div style="background: #f9f9f9; padding: 15px; border-radius: 5px;">
+    <h3>レビューの管理</h3>
+    <p><a href="{{ url_for('add_review', course_id=course['id']) }}" style="font-weight: bold;">＋ この授業のレビューを書く</a></p>
+
+    <form method="post" action="{{ url_for('cancel_review', course_id=course['id']) }}" style="margin-top: 10px;">
+      <label>投稿を取り消す場合（学籍番号を入力）: 
+        <input name="name" placeholder="投稿時の学籍番号" required>
+      </label>
+      <button type="submit">取消を実行する</button>
+    </form>
+</div>
+
+<p style="margin-top: 20px;"><a href="{{ url_for('index') }}">← トップページに戻る</a></p>
+
 {% endblock %}
