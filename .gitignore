@@ -4,10 +4,4 @@ __pycache__/
 venv/
 .env
 .ipynb_checkpoints/
-instance/    conn.commit()
-
-if __name__ == "__main__":
-    conn = init_db()
-    seed_sample_courses(conn)
-    print("Initialized DB as reviews.db with sample courses.")
-    conn.close()
+instance/
