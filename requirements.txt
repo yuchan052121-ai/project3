@@ -2,6 +2,7 @@ Flask==2.3.3
 gunicorn
 numpy
 pandas
-gensin
+gensim
 scikit-learn
 nltk
+
