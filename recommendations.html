@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <title>あなたへのおすすめ授業</title>
+    <style>
+        body { font-family: sans-serif; margin: 20px; }
+        table { border-collapse: collapse; width: 100%; margin-top: 20px; }
+        th, td { border: 1px solid #ccc; padding: 10px; text-align: left; }
+        th { background-color: #f4f4f4; }
+        .score { font-weight: bold; color: #d9534f; }
+        .nav { margin-bottom: 20px; }
+    </style>
+</head>
+<body>
+    <div class="nav">
+        <a href="{{ url_for('index') }}">← トップページに戻る</a>
+    </div>
+
+    <h1>あなたへのおすすめ授業</h1>
+    
+    <p>レビューを投稿した時の名前を入力すると、あなたの興味に合わせた授業をAIが推薦します。</p>
+
+    <form method="post">
+        <input type="text" name="name" placeholder="名前を入力" value="{{ user_name }}" style="padding: 5px; width: 200px;">
+        <button type="submit" style="padding: 5px 15px;">おすすめを表示</button>
+    </form>
+
+    {% with messages = get_flashed_messages() %}
+      {% if messages %}
+        <ul style="color: red;">
+        {% for message in messages %}
+          <li>{{ message }}</li>
+        {% endfor %}
+        </ul>
+      {% endif %}
+    {% endwith %}
+
+    {% if recs %}
+        <h2>{{ user_name }} さんへのおすすめTOP10</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>科目名</th>
+                    <th>推定トピック</th>
+                    <th>推薦スコア</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for course in recs %}
+                <tr>
+                    <td>{{ course['授業科目名'] }}</td>
+                    <td>{{ course['トピック'] }}</td>
+                    <td class="score">{{ "%.2f"|format(course['推薦スコア']) }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% endif %}
+
+</body>
+</html>
